@@ -94,7 +94,7 @@
 					level += 1;
 					document.getElementById("level").innerHTML = level;
 				} else {
-					alert("You don't have enough credits to level up");
+					alert("You currently have " + credits + " credits. You lack " + parseInt(Levels[level-1]-credits) + " credits to purchase the next level.");
 				}
 			}
 
