@@ -1,0 +1,135 @@
+<html>
+	<head>
+	</head>
+	<body>
+		<table border="1px">
+			<tr>
+				<td>
+					<p>Stats</p>
+					<ln>Level: </ln><ln id="level">1</ln><button onclick="buyLevel();">Buy Level</button><br>
+					<ln>Credits: </ln><ln id="credits">0</ln><button onclick="searchStash();" id="stashbutton">Search stash</button><br>
+				</td>
+				<td>
+					<p>Status</p>
+					<ln>Players: </ln><ln id="players">1</ln><br>
+				</td>
+			</tr>
+			<tr>
+				<td width="300px">
+					<p>Bank</p>
+					<ln id="stash">There's currently no money stash.</ln><br>
+				</td>
+				<td width="250px">
+					<p>Slot Machine</p>
+					<input type="text" placeholder="Input amount to roll" id="slotmachine">
+					<button onclick="slotMachine();">Pay</button>
+				</td>
+			</tr>
+		</table>
+
+		<script>
+			var stashSpawned = false;
+			var credits = 0;
+			var level = 1;
+			var players = 1;
+
+			var Levels = [100, 300, 500, 750, 1000]
+
+			function slotMachine()
+			{
+				var slotcredit = parseInt(document.getElementById("slotmachine").value);
+				console.log(slotcredit)
+
+				if(slotcredit <= credits)
+				{
+
+					var slotchance = Math.floor(Math.random()*100+1);
+
+					if(slotchance < 65)
+					{
+						alert("You lost " + slotcredit + " credits");
+						credits -= slotcredit;
+					} else {
+						var reward = slotcredit*(Math.floor(Math.random()*3+1));
+						credits += reward;
+						alert("You received " + parseInt(reward+10) + " credits");
+					}
+					document.getElementById("credits").innerHTML = credits;
+				} else {
+					alert("You don't have enough credits to pay this machine.");
+				}
+			}
+
+			var stashTimer;
+			var stashTimerSeconds;
+
+			var stashSpawnTimer;
+
+			var stashFunction = function()
+			{
+				stashTimerSeconds -= 1;
+
+				console.log(stashTimerSeconds);
+
+				if(stashTimerSeconds == 0)
+				{
+					var tmpCredits = 10*players*(Math.floor(Math.random()*4)+1);
+					credits += tmpCredits;
+					document.getElementById("credits").innerHTML = credits;
+					document.getElementById("stash").innerHTML = "There's currently no money stash spawned";
+					clearInterval(stashTimer);
+					stashSpawnTimer = setInterval(placeStash, 10000);
+					document.getElementById("stashbutton").disabled = false;
+					alert("You just got " + tmpCredits + " from the money stash.");
+					stashSpawned = false;
+				}
+			}
+
+			function buyLevel()
+			{
+				if(credits >= Levels[level-1])
+				{
+					credits -= Levels[level-1];
+					document.getElementById("credits").innerHTML = credits;
+					level += 1;
+					document.getElementById("level").innerHTML = level;
+				} else {
+					alert("You don't have enough credits to level up");
+				}
+			}
+
+			function searchStash()
+			{
+				if(stashSpawned == true)
+				{
+					clearInterval(stashSpawnTimer);
+					document.getElementById("stashbutton").disabled = true;
+					stashTimerSeconds = Math.floor(Math.random()*10+10);
+
+					stashTimer = setInterval(stashFunction, 1000);
+				} else {
+					alert("You must wait until stash is spawned");
+				}
+			}
+
+			function updatePlayers()
+			{
+				players = Math.floor(Math.random()*8)+1;
+				document.getElementById("players").innerHTML = players;
+			}
+
+			function placeStash()
+			{
+				if(stashSpawned == false)
+				{
+					console.log("Spawning stash");
+					stashSpawned = true;
+					document.getElementById("stash").innerHTML = "There is a money stash spawned.";
+				}
+			}
+
+			stashSpawnTimer = setInterval(placeStash, 10000);
+			setInterval(updatePlayers, 60000);
+		</script>
+	</body>
+</html>
